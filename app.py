@@ -4,14 +4,17 @@ import random
 # --- 1. PAGE CONFIG & THEME ---
 st.set_page_config(page_title="One Ring Trivia", page_icon="💍", layout="centered")
 
-# Custom CSS for the full immersive experience
+# Custom CSS for the full immersive experience with the new scene background
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Bilbo+Swash+Caps&family=MedievalSharp&display=swap');
 
     .stApp {
-        background-image: url("https://www.transparenttextures.com/patterns/old-map.png");
-        background-color: #2b1d0e;
+        /* CHANGED: New background image featuring LOTR-style green expanses */
+        background-image: url("https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?q=80&w=2000");
+        background-color: #2b1d0e; /* Fallback color */
+        background-size: cover;
+        background-position: center;
         background-attachment: fixed;
     }
 
@@ -26,15 +29,23 @@ st.markdown("""
 
     h1, h2, h3, p, label, .stMarkdown {
         font-family: 'MedievalSharp', serif !important;
-        color: #f4e4bc !important;
+        /* UPDATED: Increased contrast for text against a lighter background */
+        color: #fcf6e3 !important; 
+        text-shadow: 1px 1px 2px #000;
     }
 
     /* Styling for the info boxes */
     .stInfo {
-        background-color: rgba(45, 30, 15, 0.9) !important;
+        /* UPDATED: Made box darker with slightly more opacity for better readability */
+        background-color: rgba(25, 15, 5, 0.95) !important;
         border: 2px solid #FFD700 !important;
         border-radius: 15px;
         padding: 20px;
+    }
+    
+    /* Ensure text inside info boxes is light */
+    .stInfo markdown {
+        color: #fcf6e3 !important;
     }
 
     /* Red "Cast into the Fire" Button */
@@ -47,11 +58,17 @@ st.markdown("""
         font-size: 20px;
         padding: 10px 40px;
         transition: 0.3s;
+        font-family: 'MedievalSharp', serif !important;
     }
     
     div.stButton > button:hover {
         background-color: #8b0000 !important;
         transform: scale(1.05);
+    }
+    
+    /* Ensure sidebar text is readable against the background image */
+    section[data-testid="stSidebar"] {
+        background-color: rgba(30, 20, 10, 0.8);
     }
     </style>
     """, unsafe_allow_html=True)
