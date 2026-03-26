@@ -1,49 +1,71 @@
+To make your website look like a professional Middle-earth artifact, we’re going to use Google Fonts to get that cursive look and a background image to make it feel like an ancient map.
+
+Here is the updated code. I have added a "Parchment" background and the "Bilbo Swash Caps" font for your title.
+
+Updated app.py
+Python
 import streamlit as st
 import random
 
-# --- THE "ONE RING" THEME (CSS) ---
-st.set_page_config(page_title="LOTR Quote Quiz", page_icon="💍")
+# --- 1. PAGE CONFIG & THEME ---
+st.set_page_config(page_title="One Ring Trivia", page_icon="💍", layout="centered")
 
+# Custom CSS for the "Parchment & Gold" look
 st.markdown("""
     <style>
-    /* Main background and text colors */
+    /* Import Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Bilbo+Swash+Caps&family=MedievalSharp&display=swap');
+
+    /* Background Image (Parchment Texture) */
     .stApp {
-        background-color: #1a1a1a;
-        color: #FFD700;
+        background-image: url("https://www.transparenttextures.com/patterns/old-map.png");
+        background-color: #2b1d0e; /* Dark fallback */
+        background-attachment: fixed;
     }
-    /* Styling the headers */
-    h1, h2, h3 {
-        color: #FF4500 !important;
-        text-shadow: 2px 2px #000000;
-        font-family: 'Georgia', serif;
+
+    /* THE CURSIVE TITLE */
+    .cursive-title {
+        font-family: 'Bilbo Swash Caps', cursive;
+        color: #FFD700; /* Gold */
+        text-align: center;
+        font-size: 72px !important;
+        text-shadow: 3px 3px 5px #000;
+        margin-bottom: 0px;
     }
-    /* Styling the quote box */
+
+    /* Subheaders and Text */
+    h3, p, label {
+        font-family: 'MedievalSharp', serif !important;
+        color: #f4e4bc !important; /* Cream color */
+    }
+
+    /* The Question Box */
     .stInfo {
-        background-color: #2b2b2b !important;
-        color: #FFD700 !important;
-        border: 2px solid #FF4500 !important;
+        background-color: rgba(50, 30, 10, 0.8) !important;
+        border: 2px solid #FFD700 !important;
+        color: #f4e4bc !important;
         border-radius: 15px;
     }
-    /* Customizing buttons */
-    .stButton>button {
-        background-color: #FFD700 !important;
-        color: black !important;
-        font-weight: bold;
-        border-radius: 20px;
-        border: 2px solid #FF4500;
-    }
-    .stButton>button:hover {
-        background-color: #FF4500 !important;
+
+    /* Centering the Buttons */
+    div.stButton > button {
+        display: block;
+        margin: 0 auto;
+        background-color: #8b0000 !important; /* Deep Red */
         color: white !important;
+        border: 2px solid #FFD700 !important;
+        padding: 10px 30px;
+        font-size: 20px;
     }
-    /* Radio button text color */
-    div[role="radiogroup"] label {
-        color: #FFD700 !important;
+    
+    /* Progress Bar Color */
+    .stProgress > div > div > div > div {
+        background-color: #FFD700;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# --- QUIZ DATA ---
+# --- 2. QUIZ DATA ---
 if 'quiz_data' not in st.session_state:
     st.session_state.quiz_data = [
         {"quote": "All we have to decide is what to do with the time that is given us.", "correct": "Gandalf", "options": ["Elrond", "Galadriel", "Aragorn", "Gandalf"]},
@@ -51,44 +73,51 @@ if 'quiz_data' not in st.session_state:
         {"quote": "One does not simply walk into Mordor.", "correct": "Boromir", "options": ["Aragorn", "Gimli", "Legolas", "Boromir"]},
         {"quote": "I am no man!", "correct": "Éowyn", "options": ["Arwen", "Galadriel", "Éomer", "Éowyn"]},
         {"quote": "My precious.", "correct": "Gollum", "options": ["Bilbo", "Frodo", "Sauron", "Gollum"]},
+        {"quote": "Even the smallest person can change the course of the future.", "correct": "Galadriel", "options": ["Gandalf", "Elrond", "Bilbo", "Galadriel"]},
     ]
     random.shuffle(st.session_state.quiz_data)
     st.session_state.score = 0
     st.session_state.current_idx = 0
 
-# --- THE UI ---
-st.title("💍 The One Ring Trivia")
-st.write("---")
+# --- 3. SIDEBAR (QUEST TRACKER) ---
+with st.sidebar:
+    st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/The_One_Ring_Inscription.svg/1200px-The_One_Ring_Inscription.svg.png")
+    st.header("Quest Tracker")
+    st.write(f"**Current Score:** {st.session_state.score}")
+    progress = st.session_state.current_idx / len(st.session_state.quiz_data)
+    st.progress(progress)
+    if st.session_state.current_idx > 0:
+        st.write(f"You have traveled {int(progress*100)}% of the way to Mount Doom.")
+
+# --- 4. MAIN INTERFACE ---
+st.markdown('<h1 class="cursive-title">The One Ring Trivia</h1>', unsafe_allow_html=True)
+st.write("<br>", unsafe_allow_html=True)
 
 if st.session_state.current_idx < len(st.session_state.quiz_data):
     item = st.session_state.quiz_data[st.session_state.current_idx]
     
     st.subheader(f"Scroll {st.session_state.current_idx + 1}")
-    st.info(f"*{item['quote']}*")
+    st.info(f"### \"{item['quote']}\"")
     
+    # Form for submission
     with st.form(key=f"quiz_form_{st.session_state.current_idx}"):
         user_choice = st.radio("Who spoke these words?", item['options'])
         submit = st.form_submit_button("Cast into the Fire")
         
         if submit:
             if user_choice == item['correct']:
-                st.success("Correct! The light of Eärendil shines upon you. ✨")
+                st.success("Correct! The light of Eärendil shines upon you.")
                 st.session_state.score += 1
             else:
-                st.error(f"Wrong! It was {item['correct']}. To the dungeons with you!")
+                st.error(f"Wrong! It was {item['correct']}. You shall not pass!")
             
             st.session_state.current_idx += 1
-            st.button("Next Trial")
+            st.button("Continue the Journey")
 else:
     st.balloons()
-    st.header("The Quest is Complete!")
-    st.subheader(f"Your final score: {st.session_state.score}/{len(st.session_state.quiz_data)}")
+    st.markdown('<h1 class="cursive-title">The Quest is Won!</h1>', unsafe_allow_html=True)
+    st.write(f"### Final Score: {st.session_state.score} / {len(st.session_state.quiz_data)}")
     
-    if st.session_state.score == len(st.session_state.quiz_data):
-        st.write("🏆 You are a true Lore-master of Middle-earth!")
-    else:
-        st.write("Keep studying the ancient scrolls...")
-
     if st.button("Start a New Quest"):
         st.session_state.current_idx = 0
         st.session_state.score = 0
