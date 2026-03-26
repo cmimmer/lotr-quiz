@@ -1,9 +1,3 @@
-To make your website look like a professional Middle-earth artifact, we’re going to use Google Fonts to get that cursive look and a background image to make it feel like an ancient map.
-
-Here is the updated code. I have added a "Parchment" background and the "Bilbo Swash Caps" font for your title.
-
-Updated app.py
-Python
 import streamlit as st
 import random
 
