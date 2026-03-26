@@ -10,8 +10,8 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Bilbo+Swash+Caps&family=MedievalSharp&display=swap');
 
     .stApp {
-        /* CHANGED: New background image featuring LOTR-style green expanses */
-        background-image: url("https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?q=80&w=2000");
+        /* CHANGED: New background image featuring the LOTR map from your image */
+        background-image: url("http://googleusercontent.com/image_collection/image_retrieval/491177566014039877_0");
         background-color: #2b1d0e; /* Fallback color */
         background-size: cover;
         background-position: center;
@@ -29,14 +29,12 @@ st.markdown("""
 
     h1, h2, h3, p, label, .stMarkdown {
         font-family: 'MedievalSharp', serif !important;
-        /* UPDATED: Increased contrast for text against a lighter background */
         color: #fcf6e3 !important; 
         text-shadow: 1px 1px 2px #000;
     }
 
     /* Styling for the info boxes */
     .stInfo {
-        /* UPDATED: Made box darker with slightly more opacity for better readability */
         background-color: rgba(25, 15, 5, 0.95) !important;
         border: 2px solid #FFD700 !important;
         border-radius: 15px;
