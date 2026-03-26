@@ -3,7 +3,9 @@ import random
 import base64
 import os
 
-# --- 1. BACKGROUND IMAGE HELPER ---
+# --- 1. IMAGE LOADING HELPERS ---
+# Function to convert a local image file to a Base64 string.
+# This ensures images load correctly on the deployed website.
 def get_base64_of_bin_file(bin_file):
     if os.path.exists(bin_file):
         with open(bin_file, 'rb') as f:
@@ -11,6 +13,7 @@ def get_base64_of_bin_file(bin_file):
         return base64.b64encode(data).decode()
     return None
 
+# Sets the main page background using 'map.webp'
 def set_page_bg(bin_file):
     bin_str = get_base64_of_bin_file(bin_file)
     if bin_str:
@@ -25,10 +28,21 @@ def set_page_bg(bin_file):
             </style>
             """, unsafe_allow_html=True)
 
+# Function specifically to display the 'caleb.webp.png' image when an answer is correct.
+# This approach ensures the "pop up" image is also Base64 encoded for reliability.
+def display_correct_image(bin_file):
+    bin_str = get_base64_of_bin_file(bin_file)
+    if bin_str:
+        # Displays the image with a specified width to keep the layout clean
+        st.image(f"data:image/png;base64,{bin_str}", width=300, caption="You nailed it!")
+    else:
+        # Fallback in case the file isn't found
+        st.caption("(Caleb image not found, check filename)")
+
 # --- 2. PAGE CONFIG ---
 st.set_page_config(page_title="One Ring Trivia", page_icon="💍", layout="centered")
 
-# Attempt to load your background file
+# Attempt to load your main background file
 set_page_bg('map.webp') 
 
 # --- 3. CUSTOM CSS (STYLING THE CONTENT BOX & FONTS) ---
@@ -156,12 +170,25 @@ if st.session_state.current_idx < 20:
         
         if st.form_submit_button("Cast into the Fire"):
             ans = item['correct']
-            if (difficulty == "Easy (Multiple Choice)" and choice == ans) or \
-               (difficulty == "Hard (Text Input)" and choice.strip().lower() == ans.lower()):
+            
+            # Use lower() for hard mode comparison to be generous with capitalization
+            cleaned_choice = choice.strip()
+            
+            # Detect correct answer
+            is_correct = False
+            if difficulty == "Easy (Multiple Choice)" and choice == ans:
+                is_correct = True
+            elif difficulty == "Hard (Text Input)" and cleaned_choice.lower() == ans.lower():
+                is_correct = True
+                
+            if is_correct:
                 st.success("Correct! ✨")
+                # --- NEW: Display caleb.webp.png inside the scrim ---
+                display_correct_image('caleb.webp.png')
                 st.session_state.score += 1
             else:
                 st.error(f"Wrong! It was {ans}. ❌")
+            
             st.session_state.current_idx += 1
             st.form_submit_button("Next Trial")
 else:
@@ -172,4 +199,4 @@ else:
         st.session_state.current_idx = 0
         st.session_state.score = 0
         random.shuffle(st.session_state.quiz_data)
-        st.rerun()
+        st.rerun()    
